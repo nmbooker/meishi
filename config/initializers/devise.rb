@@ -4,7 +4,7 @@ Devise.setup do |config|
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class with default "from" parameter.
-  config.mailer_sender = "please-change-me-at-config-initializers-devise@example.com"
+  config.mailer_sender = ENV['MAILER_SENDER'] || "foo@example.com"
 
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
@@ -83,13 +83,11 @@ Devise.setup do |config|
 
   # Setup a pepper to generate the encrypted password.
   begin
-    config.pepper = Meishi::Application.config.devise_user_salt
-  rescue
-    unless File.basename($0) == 'rake'
-      STDERR.puts "*** Could not load password salt. ***"
-      Rails.logger.error "*** Could not load password salt. ***"
-      exit
-    end
+    config.pepper = ENV.fetch('DEVISE_SALT')
+  rescue IndexError => e
+    STDERR.puts "*** Could not load password salt.: #{e} ***"
+    Rails.logger.error "*** Could not load password salt. ***"
+    exit
   end
 
   # ==> Configuration for :confirmable

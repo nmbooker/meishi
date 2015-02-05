@@ -36,6 +36,32 @@ webrick.key in config/cert/.  With these files in place it now use
 the rails_secure script instead of rails.  E.x.:
 bundle e script/rails_secure server
 
+## Docker
+
+Initial setup:
+
+```
+$ docker build -t meishi .
+$ mkdir "$HOME/meishi_data"
+$ docker run -i -t -v "$HOME/meishi_data:/data" -e DEVISE_SALT=01234567890abcdef -e SECRET_TOKEN=0123456789abcdef --rm meishi bundle exec rake db:setup meishi:first_run
+```
+
+To run the server:
+
+```
+$ docker run -i -t -p3000:3000 -v "$HOME/meishi_data:/data" -e DEVISE_SALT=01234567890abcdef -e SECRET_TOKEN=0123456789abcdef --rm meishi
+```
+
+Environment:
+
+```
+DEVISE_SALT     A salt for devise passwords.  Generate random but keep consistent.  Required.
+
+SECRET_TOKEN    A secret token for cookies, must be at least 30 characters. Generate random but keep consistent.  Required.
+
+MAILER_FROM     The email address that devise should send e-mails from.  Recommended.  Defaults to foo@example.com which you probably don't want.
+```
+
 ## Getting Started (client)
 
 ### Android CardDAV-Sync
